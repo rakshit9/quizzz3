@@ -32,7 +32,13 @@ def connection():
 
 def redisconnection():
     try:
-        r = 1
+        redis_password = os.getenv('REDIS_PASSWORD')
+        r = redis.StrictRedis(
+            host='rakshit.redis.cache.windows.net',
+            port=6380,
+            password=redis_password,  # Reference the password via environment variable
+            ssl=True
+        )
         return r
     except Exception as e:
         print(e)
