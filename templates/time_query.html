@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Range Query</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Query Time Range</h2>
+        <form method="POST" action="/time_query">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.start_time.label(class="form-control-label") }}
+                {{ form.start_time(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.end_time.label(class="form-control-label") }}
+                {{ form.end_time(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+        {% if records %}
+            <h3>Results:</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Network</th>
+                        <th>Time</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                        <tr>
+                            <td>{{ record.id }}</td>
+                            <td>{{ record.net }}</td>
+                            <td>{{ record.time }}</td>
+                            <td>{{ record.latitude }}</td>
+                            <td>{{ record.longitude }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p>Query Time: {{ query_time }} seconds</p>
+            <p>Cache Hits: {{ cache_hits }}</p>
+            <p>Cache Misses: {{ cache_misses }}</p>
+            {% if cache_hit %}
+                <p>Data retrieved from cache.</p>
+            {% else %}
+                <p>Data retrieved from database and stored in cache.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

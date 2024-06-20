@@ -377,6 +377,46 @@ def update_record():
 
     return render_template('update_record.html', form=form)
 
+class TimeRangeQueryForm(FlaskForm):
+    start_time = StringField('Start Time:', validators=[DataRequired()])
+    end_time = StringField('End Time:', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+@app.route('/time_query', methods=['GET', 'POST'])
+def time_query():
+    form = TimeRangeQueryForm()
+    if form.validate_on_submit():
+        conn = connection()
+        cursor = conn.cursor()
+        r = redisconnection()
+        start_time = int(form.start_time.data)
+        end_time = int(form.end_time.data)
+
+        query = f"SELECT id, net, time, latitude, longitude FROM data_exam WHERE time BETWEEN {start_time} AND {end_time}"
+        key = hashlib.sha224(query.encode()).hexdigest()
+        cache_hit = False
+
+        # Check if data is in Redis
+        start_query_time = time.time()
+        cached_rows = r.get(key)
+        if cached_rows:
+            rows = pickle.loads(cached_rows)
+            cache_hit = True
+            cache_hits = 1
+            cache_misses = 0
+        else:
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            rows = [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
+            r.set(key, pickle.dumps(rows))
+            cache_hits = 0
+            cache_misses = 1
+
+        query_time = time.time() - start_query_time
+
+        return render_template('time_query.html', form=form, records=rows, query_time=query_time, cache_hit=cache_hit, cache_hits=cache_hits, cache_misses=cache_misses)
+
+    return render_template('time_query.html', form=form)
 
 if __name__ == "__main__":
     app.run(debug=True)
