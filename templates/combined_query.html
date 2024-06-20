@@ -13,6 +13,31 @@
             {{ form.submit }}
         </form>
     </div>
+    {% if records %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Net</th>
+                <th>Time</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.id }}</td>
+                <td>{{ record.net }}</td>
+                <td>{{ record.time }}</td>
+                <td>{{ record.latitude }}</td>
+                <td>{{ record.longitude }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
     {% if error %}
         <h4><font color="red">{{ error }}</font></h4>
     {% endif %}
@@ -24,5 +49,6 @@
         {% endfor %}
         </ul>
     {% endif %}
+
 </div>
 {% endblock %}

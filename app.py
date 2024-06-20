@@ -290,7 +290,21 @@ def combined_query():
                 individual_times.append(individual_query_time)
             total_time_end = time.time() - total_time_start
 
-            return render_template('combined_query.html', form=form, individual_times=individual_times, total_time=total_time_end)
+            cursor.close()
+            cursor = conn.cursor()
+            query1 = """
+            SELECT  TOP (?) id, net, time, latitude, longitude 
+            FROM data_exam 
+            WHERE net = ? AND time >= ? 
+            ORDER BY time ASC
+            """
+            start_query_time = time.time()
+            cursor.execute(query, (count, net_value, start_time))
+            results = cursor.fetchall()
+            # Convert the result into a list of dictionaries for easier access in the template
+            records = [dict(zip([column[0] for column in cursor.description], row)) for row in results]
+
+            return render_template('combined_query.html', form=form,records=records, individual_times=individual_times, total_time=total_time_end)
 
         except Exception as e:
             print(e)
