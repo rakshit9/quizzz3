@@ -172,6 +172,197 @@ def form2():
         print(e)
         return render_template('form2.html', form=form, error=f'Error: {e}')
 
+class TimeRangeForm(FlaskForm):
+    time_start = StringField('Start Time:', validators=[DataRequired()])
+    time_end = StringField('End Time:', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+@app.route('/time_range', methods=['GET', 'POST'])
+def time_range():
+    form = TimeRangeForm()
+    if form.validate_on_submit():
+        try:
+            conn = connection()
+            cursor = conn.cursor()
+            time_start = int(form.time_start.data)
+            time_end = int(form.time_end.data)
+
+            # Ensure start time is less than end time
+            if time_start > time_end:
+                return render_template('time_range.html', form=form, error='Start Time must be less than End Time')
+
+            query = f"SELECT id, net, time, latitude, longitude FROM data_exam WHERE time BETWEEN {time_start} AND {time_end}"
+            start_time = time.time()
+            cursor.execute(query)
+            results = cursor.fetchall()
+            query_time = time.time() - start_time
+
+            # Convert the result into a list of dictionaries for easier access in the template
+            records = [dict(zip([column[0] for column in cursor.description], row)) for row in results]
+
+            return render_template('time_range.html', form=form, records=records, query_time=query_time)
+
+        except Exception as e:
+            print(e)
+            return render_template('time_range.html', form=form, error=str(e))
+        finally:
+            cursor.close()
+            conn.close()
+
+    return render_template('time_range.html', form=form)
+
+class EventForm(FlaskForm):
+    time = StringField('Start Time:', validators=[DataRequired()])
+    net = StringField('Network Code:', validators=[DataRequired()])
+    count = StringField('Number of Events:', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+@app.route('/events', methods=['GET', 'POST'])
+def events():
+    form = EventForm()
+    if form.validate_on_submit():
+        try:
+            conn = connection()
+            cursor = conn.cursor()
+            start_time = int(form.time.data)
+            net_value = form.net.data
+            count = int(form.count.data)
+
+            query = """
+            SELECT TOP (?) id, net, time, latitude, longitude 
+            FROM data_exam 
+            WHERE net = ? AND time >= ? 
+            ORDER BY time ASC
+            """
+            start_query_time = time.time()
+            cursor.execute(query, (count, net_value, start_time))
+            results = cursor.fetchall()
+            query_time = time.time() - start_query_time
+
+            # Convert the result into a list of dictionaries for easier access in the template
+            records = [dict(zip([column[0] for column in cursor.description], row)) for row in results]
+
+            return render_template('events.html', form=form, records=records, query_time=query_time)
+
+        except Exception as e:
+            print(e)
+            return render_template('events.html', form=form, error=str(e))
+        finally:
+            cursor.close()
+            conn.close()
+
+    return render_template('events.html', form=form)
+
+class CombinedQueryForm(FlaskForm):
+    time = StringField('Start Time:', validators=[DataRequired()])
+    net = StringField('Network Code:', validators=[DataRequired()])
+    count = StringField('Number of Events:', validators=[DataRequired()])
+    repeat_count = StringField('Number of Repetitions (T):', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+@app.route('/combined_query', methods=['GET', 'POST'])
+def combined_query():
+    form = CombinedQueryForm()
+    if form.validate_on_submit():
+        try:
+            conn = connection()
+            cursor = conn.cursor()
+            start_time = int(form.time.data)
+            net_value = form.net.data
+            count = int(form.count.data)
+            repeat_count = int(form.repeat_count.data)
+
+            query = """
+            SELECT TOP (?) id, net, time, latitude, longitude 
+            FROM data_exam 
+            WHERE net = ? AND time >= ? 
+            ORDER BY time ASC
+            """
+
+            individual_times = []
+            total_time_start = time.time()
+            for _ in range(repeat_count):
+                start_query_time = time.time()
+                cursor.execute(query, (count, net_value, start_time))
+                cursor.fetchall()
+                individual_query_time = time.time() - start_query_time
+                individual_times.append(individual_query_time)
+            total_time_end = time.time() - total_time_start
+
+            return render_template('combined_query.html', form=form, individual_times=individual_times, total_time=total_time_end)
+
+        except Exception as e:
+            print(e)
+            return render_template('combined_query.html', form=form, error=str(e))
+        finally:
+            cursor.close()
+            conn.close()
+
+    return render_template('combined_query.html', form=form)
+
+class UpdateRecordForm(FlaskForm):
+    time = StringField('Time:', validators=[DataRequired()])
+    latitude = StringField('Latitude:')
+    longitude = StringField('Longitude:')
+    depth = StringField('Depth:')
+    mag = StringField('Magnitude:')
+    net = StringField('Network Code:')
+    submit = SubmitField('Update Record')
+
+
+@app.route('/update_record', methods=['GET', 'POST'])
+def update_record():
+    form = UpdateRecordForm()
+    if form.validate_on_submit():
+        try:
+            conn = connection()
+            cursor = conn.cursor()
+
+            # Check if a record exists with the given time
+            cursor.execute("SELECT * FROM data_exam WHERE time = ?", (int(form.time.data),))
+            record = cursor.fetchone()
+            if record:
+                # Build the update query based on provided form data
+                updates = []
+                params = []
+                if form.latitude.data:
+                    updates.append("latitude = ?")
+                    params.append(float(form.latitude.data))
+                if form.longitude.data:
+                    updates.append("longitude = ?")
+                    params.append(float(form.longitude.data))
+                if form.depth.data:
+                    updates.append("depth = ?")
+                    params.append(float(form.depth.data))
+                if form.mag.data:
+                    updates.append("mag = ?")
+                    params.append(float(form.mag.data))
+                if form.net.data:
+                    updates.append("net = ?")
+                    params.append(form.net.data)
+
+                if updates:
+                    params.append(int(form.time.data))
+                    update_query = f"UPDATE data_exam SET {', '.join(updates)} WHERE time = ?"
+                    cursor.execute(update_query, params)
+                    conn.commit()
+                    message = "Record updated successfully."
+                else:
+                    message = "No updates performed."
+            else:
+                message = "No record found for the given time."
+
+            return render_template('update_record.html', form=form, message=message)
+
+        except Exception as e:
+            return render_template('update_record.html', form=form, error=str(e))
+        finally:
+            cursor.close()
+            conn.close()
+
+    return render_template('update_record.html', form=form)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

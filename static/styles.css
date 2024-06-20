@@ -10,8 +10,8 @@ body {
 }
 
 .jumbotron {
-    background-color: #343a40;
-    color: #fff;
+    background-color: #3571ae;
+    color: #ffffff;
     padding: 30px;
     margin-bottom: 30px;
     border-radius: 5px;
@@ -22,13 +22,13 @@ body {
 }
 
 .navbar {
-    background-color: #343a40;
+    background-color: #3571ae;
     border-radius: 5px;
     padding: 15px;
 }
 
 .navbar-inverse {
-    background-color: #343a40;
+    background-color: #3571ae;
     border-color: #080808;
 }
 
@@ -37,7 +37,7 @@ body {
 }
 
 .navbar-inverse .navbar-brand:hover {
-    color: #5cb85c;
+    color: #000000;
 }
 
 .navbar-nav {

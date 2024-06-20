@@ -23,7 +23,7 @@ connection = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATAB
 cursor = connection.cursor()
 
 # Read your CSV file
-data = pd.read_csv('data.csv')
+data = pd.read_csv('data_exam.csv')
 
 # Convert the dataframe to a list of tuples
 data_tuples = list(data.itertuples(index=False, name=None))
@@ -32,7 +32,7 @@ data_tuples = list(data.itertuples(index=False, name=None))
 # Prepare the SQL INSERT statement
 # table_name - your target table name
 # columns - a string with column names, comma separated 
-table_name = 'EarthquakeData'
+table_name = 'EarthquakeDataExam'
 columns = ', '.join(data.columns)
 
 for row in data_tuples:

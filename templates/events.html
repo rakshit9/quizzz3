@@ -1,0 +1,44 @@
+
+{% extends "base.html" %}
+{% block title %}Event Query{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="form-group">
+        <form action="/events" method="POST">
+            {{ form.csrf_token() }}
+            {{ form.time.label }} {{ form.time }}<br/>
+            {{ form.net.label }} {{ form.net }}<br/>
+            {{ form.count.label }} {{ form.count }}<br/>
+            {{ form.submit }}
+        </form>
+    </div>
+    {% if error %}
+        <h4><font color="red">{{ error }}</font></h4>
+    {% endif %}
+    {% if records %}
+        <h3>Query completed in {{ query_time|round(2) }} seconds.</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Net</th>
+                    <th>Time</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.id }}</td>
+                    <td>{{ record.net }}</td>
+                    <td>{{ record.time }}</td>
+                    <td>{{ record.latitude }}</td>
+                    <td>{{ record.longitude }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

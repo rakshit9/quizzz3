@@ -1,0 +1,79 @@
+
+Name:
+Last 4 digits ID:
+
+CSE 6332, Cloud Computing					
+
+
+Quiz Q3, Summer 2024   (c) DL, UTA, 2024
+
+
+  C&P means cut and paste only those relevant lines from your program(s) into this quiz.
+
+
+ 1.  I understand that I am on my honor during this quiz, I will not collaborate, use 
+     non-allowed sources, and I will not discuss or share this quiz with anyone for the next 
+     12 hours.
+     You MAY: use Google to search, use previous source code, 
+     YOU MAY NOT use:
+     Email, Facebook, Hangouts, IM, chats, Skype or ANY other human connection.
+
+     This is a timed test. Late tests will have points deducted for being late.
+     Very late tests will not be graded.
+
+     When you are complete, with any part, please show or send the link, raise your hand, so we may visually inspect that part.
+
+     The second part of the test, you should electronically submit, you will need to copy and paste 
+     only those lines of code to implement that part of the test, usually a few (two to eight) lines of code. 
+     Place it immediately after the question.
+
+     Submit this Quiz (renamed) with code cut and pasted, ONLY text. DO NOT submit zips, binaries, libraries,
+     or anything other than text.
+
+     When any parts(questions) are complete complete, submit this test, you may make multiple submissions.
+
+     If you have computer, or other, problems, please raise your hand immediately.
+
+     If you understand and agree, please initial here:
+     _________________
+
+ 2. Get files from this same folder.
+   
+ 3. Name your program/submission with your name and last digits of your ID.
+
+ 4. Using the cloud services provider, all functionality possible should be implemented on that provider.
+    (Of course, displaying web pages through a browser and the user interface is "local")
+    The cloud provider is MS Azure.
+
+ 5. Upload all data files (*jpg and *csv, not this quiz) to the cloud service.
+
+ 6. Please create a relational database (your choice which) from the .csv data on the cloud provider, you may do this manually 
+    or in code, it is your choice.
+  
+Show and submit code, when each part is complete, raise your hand and then show us:
+ 
+ 10. (a) Allow a user to give a range of time values (for example 18020 to 18060) and you will show the ID, the net value, 
+         the time, the id, and the latitude and longitude values for all in within that range.
+         Also - please show the time to do those queries. 
+
+     (b) Allow a user to give a time (for example 15560) and a net value (for example "ak") and a count C (for example 3)
+         and you will show all C events at that net value starting at that time (for this example at time 15560, 15820,
+         15840 at net value "ak" show those 3 events with the same attributes as part a)
+         Also - please show the time to do those queries. 
+
+ 11. A user will give you the number of times (T) to do the "query", you will do both of the previous questions 
+     that number (T) of times (that is repeat the query T times) and show the results as well as the the individual 
+     times for each followed by the total time taken. (slight modification to 10.)
+
+ 12. The user will give a time (if it exists) and modify any of the attributes.
+
+ 13. Repeat the previous question 10 and 11 using (in addition to the database) an in-memory caching mechanism 
+     (NOT an in-memory database) then show us. 
+     Please show us the number of cache hits and cache misses and times.
+
+ 14. Show us, in a link, the application running and we will try it out. Only for parts 10,11,12,13,
+
+ 15. When complete, return (send) this quiz
+     If you finish early, send this immediately, otherwise send between
+     the end of class and no more than 1 minute after that.
+

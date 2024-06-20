@@ -1,0 +1,28 @@
+
+{% extends "base.html" %}
+{% block title %}Combined Query Performance{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="form-group">
+        <form action="/combined_query" method="POST">
+            {{ form.csrf_token() }}
+            {{ form.time.label }} {{ form.time }}<br/>
+            {{ form.net.label }} {{ form.net }}<br/>
+            {{ form.count.label }} {{ form.count }}<br/>
+            {{ form.repeat_count.label }} {{ form.repeat_count }}<br/>
+            {{ form.submit }}
+        </form>
+    </div>
+    {% if error %}
+        <h4><font color="red">{{ error }}</font></h4>
+    {% endif %}
+    {% if individual_times %}
+        <h3>Total Time: {{ total_time|round(2) }} seconds.</h3>
+        <ul>
+        {% for time in individual_times %}
+            <li>Query Time: {{ time|round(4) }} seconds</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}
